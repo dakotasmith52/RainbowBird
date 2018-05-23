@@ -81,11 +81,7 @@ else:
 # Play the audio using the platform's default player
 if sys.platform == "win32":
     os.startfile(output)
-    os.remove(output)
 else:
     # the following works on Mac and Linux. (Darwin = mac, xdg-open = linux).
     opener = "open" if sys.platform == "darwin" else "xdg-open"
     subprocess.Popen([opener, output])
-    time.sleep(10)
-    os.remove(output)
-    print("I am here")
