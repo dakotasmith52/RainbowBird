@@ -1,70 +1,0 @@
-Call with customer:
-
-SportChat Inc:
-
-Looking for a DR site and doing migration into AWS.
-
-Looking to run in Hybrid mode.
-
-Questions:
-
-•	Premium Enhanced social media features, will these be going to the cloud or staying on prem? 	Planning to use AWS as DR site.
-o	2 main datacenters
-o	Planning to have every component stored in AWS as DR site
-
-•	Would apps still need to be on VM-Ware? Or can they be on EC2?
-o	Team already familiar with vmware, however feels that they would be limited by not using ec2
-o	Looking for guidance on this, whether or not to continue using VMware. 
-•	Would you use route 53?
-o	Currently using dine, however they had a DDoS attack and all their resources went down. Now they are looking to move to Route53.
-o	Interested in managed load balancing solution (ELB) 
-•	What are some other challenges you are having?
-o	Managing Database
-o	Having troubling with scaling (Aurora?)
-o	Struggling with handling random bursts 
-•	Using any monitoring tools?
-o	Currently using Paper Trail to track logs
-o	Interested in using AWS as a “burst”
-o	Using pager duty to keep track of employees working hours
-o	Interested in using some AWS services for notifications and monitoring 
-•	How long ago did you acquire your datacenter?
-o	3 years ago
-o	Every 4-6 years they have to replace their equipment
-o	This infrastructure is ONLY for this application
-o	Leveraging level 3 to connect their datacenters 
-•	Maximum amount of downtime?
-o	Zero downtime for migration 
-•	What steps do devs have to go through to spin up a vm?
-o	Currently running LAMP stack
-o	Currently using Bitbucket to clone code
-o	Setup local webserver to experiment/test 
-•	Are writes to the slave being done synchronously? How much latency? Strong need for read after write consistency?
-o	Databases need to be completely in-sync
-o	Slaves must be synchronously replicated
-o	Read only slaves are ok to be asynchronously replicated
-o	Nothing longer than 1.5 minutes in replication lag 
-•	Point in time application requirements
-o	No more than 1.5 minutes
-o	Recovery point: 25-30 minutes
-o	Recovery time objective: ideal: <=1hr 
-•	Anything nonstandard or highly customized about your MySQL?
-o	No. Normalized data, however there are a few tables that are being duplicated to be stored in a denormalized structure(messages). 
-•	For MySQL and OS, are you staying up to date?
-o	Not at all, pretty far behind. Currently at MySQL 5.3 
-•	Have a site for DR but not sending any traffic there at all, elaborate?
-o	Customer just wants to be able to pull everything back up immediately, instead of failing over. 
-•	Concerned about cost?
-o	Not too concerned about cost.
-o	More concerned about scalability and resiliency. 
-•	Are you interested in a hybrid architecture? Or just using AWS as an overflow for on-prem?
-o	Customer is interested, “having overflow traffic routed to AWS in case of a burst would be ideal.” 
-•	What are you hoping to achieve long-term for sport chat?
-o	Goal is to be the premier location where people go and talk about sports.
-o	Also includes families with children in sports, high school sports helping communities connect.
-o	Looking to be the source of inspiration of how sports impact communities.
-o	Already reached 1 million users, looking to reach 100million active users by 2020 
-•	Looking to go international?
-o	Wants to focus on getting 10million users from Europe
-o	Looking to gain users from Australia and India
-o	Latency is hurting sport chat right now 
-•	Server discovery service is agentless, only the application discovery service has an agent.
