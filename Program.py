@@ -28,7 +28,6 @@ def mytargetlang():
                 continue
             else:
                 return tlcode
-                break
 
 def readfile(f):
     readfile = open(f, 'r')
