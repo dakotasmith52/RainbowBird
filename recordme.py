@@ -58,9 +58,9 @@ myFile.setframerate(RATE)
 myFile.writeframes(b''.join(frames))
 myFile.close()
 
-# if your os is windows, start playing the file. If your os is mac, use "open", otherwise use xdg-open to play the file.
-if sys.platform == "win32":
-    os.startfile(outputfile)
-else:
-    opener = "open" if sys.platform == "darwin" else "xdg-open"
-    subprocess.Popen([opener, outputfile])
+def upload(x):
+    s3 = boto3.resource('s3')
+    s3.meta.client.upload_file(x,'jedijamez-projects','RainbowBird/recording.wav')
+
+upload(outputfile)
+print('success')
