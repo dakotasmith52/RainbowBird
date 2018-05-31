@@ -16,7 +16,7 @@ session = Session(profile_name="default")
 polly = session.client("polly")
 pollyVoice = {'en': 'Amy', 'fr': 'Celine', 'de': 'Vicki', 'pt': 'Vitoria'}
 languageOptions = {'English': 'en', 'French': 'fr', 'German': 'de', 'Portugese': 'pt'}
-myfile = input("file to be processed: ")
+textfile = input("file to be processed: ")
 
 def mytargetlang():
     while True:
@@ -35,12 +35,11 @@ def readfile(f):
     return txt
 
 translate = boto3.client(service_name='translate', region_name='us-west-2', use_ssl=True)
-result = translate.translate_text(Text=readfile(myfile), 
+result = translate.translate_text(Text=readfile(textfile), 
             SourceLanguageCode='auto', TargetLanguageCode=(mytargetlang()))
 # print('TranslatedText: ' + result.get('TranslatedText'))
 # print('SourceLanguageCode: ' + result.get('SourceLanguageCode'))
 # print('TargetLanguageCode: ' + result.get('TargetLanguageCode'))
-
 targetlanguage = result.get('TargetLanguageCode')
 
 def determineVoice(lang):
