@@ -1,19 +1,16 @@
+from __future__ import print_function
 import boto3
-import os
+from boto3 import Session
 import time
+from random import randint
+import urllib
+import os
+from tempfile import gettempdir
+import subprocess
+import contextlib
+import json
+import pprint
 
+myFile = os.path.join(gettempdir(), 'ts.json')
 
-my_location = "s3://jedijamez/projects/"
-
-
-# Record Audio when I press this button
-
-
-
-# Stop Recording when i press this button
-
-
-
-# Send audio file to my_location
-
-
+subprocess.Popen(['cat', myFile])
