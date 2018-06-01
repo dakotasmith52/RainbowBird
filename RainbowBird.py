@@ -17,6 +17,8 @@ import contextlib
 import json
 from random import randint
 import urllib
+import gzip
+import shutil
 
 
 polly = boto3.client("polly")
@@ -50,6 +52,7 @@ RECORD_SECONDS = int(input('seconds to record: '))
 fileName = "recording.wav"
 # Create a file in the temporary directory
 outputfile = os.path.join(gettempdir(), fileName)
+compressedoutputfile = os.path.join(gettempdir(), 'recording.wav.gz')
 p = pyaudio.PyAudio()
 frames = []
 
@@ -71,8 +74,16 @@ def record():
     print("* recording")
     # Start writing data to the empty frames array, each frame. Frames are derived by the following equation.
     for i in range(0, 44100 // chunk * RECORD_SECONDS):
-        data = stream.read(chunk)
-        frames.append(data)
+        try:
+            data = stream.read(chunk)
+            frames.append(data)
+        # The following catches the Input Overflowed error caused by the buffer overflowing on white noise, or the input is more than the buffer can handle. You could do this, or increase chunk size.
+        except IOError as ex:
+            if ex[1] != pyaudio.paInputOverflowed:
+                raise
+            # this returns a null value for data
+            data = '\x00' * chunk
+            print(ex)
         # check for silence here by comparing the level with 0 (or some threshold) for 
         # the contents of data.
         # then write data or not to a file
@@ -95,9 +106,15 @@ def writefile():
     myFile.writeframes(b''.join(frames))
     myFile.close()
 
+def compressfile():
+    with open(outputfile, 'rb') as f_in:
+        with gzip.open(compressedoutputfile, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+
 def upload(x):
     s3 = boto3.resource('s3')
     s3.meta.client.upload_file(x,'jedijamez-projects','RainbowBird/recording.wav')
+    print('done uploading')
 
 
 recordme(outputfile)
@@ -113,30 +130,42 @@ session = Session(profile_name='default', region_name='us-west-2')
 ts = boto3.client('transcribe')
 job_name = str(randint(0,999))
 job_uri = 'https://s3-us-west-2.amazonaws.com/jedijamez-projects/RainbowBird/recording.wav'
+print('starting transcription job ' + str(job_name))
 ts.start_transcription_job(
     TranscriptionJobName=job_name,
     Media={'MediaFileUri':job_uri},
     MediaFormat='wav',
     LanguageCode='en-US'
 )
+print('transcription job running...')
 while True:
     status = ts.get_transcription_job(TranscriptionJobName=job_name)
     if status['TranscriptionJob']['TranscriptionJobStatus'] in ['COMPLETED', 'FAILED']:
         break
-    time.sleep(1)
+    time.sleep(.2)
+print ('finished transcription job ' + str(job_name))
+
+outcome = status['TranscriptionJob']['TranscriptionJobStatus']
 
 transcript_uri = status['TranscriptionJob']['Transcript']['TranscriptFileUri']
 
 dlfile = os.path.join(gettempdir(), 'ts.json')
+print('getting json file...')
 f = urllib.request.urlopen(transcript_uri)
+print('got json file.')
 with open(dlfile, 'wb') as code:
+    print('writing contents to directory...')
     code.write(f.read())
+    print ('done.')
 
 with open(dlfile) as x:
+    print('loading json into datastore...')
     datastore = json.load(x)
+    print('done.')
 
 transcription = datastore['results']['transcripts'][0]['transcript']
 print(transcription)
+print('Outcome: ' + outcome)
     
 
 # End of Transcribe script
@@ -152,7 +181,7 @@ text = transcription
 
 def readfile(f):
     readfile = open(f, 'r')
-    txt = readfile.read(1000)
+    txt = readfile.read(3000)
     return txt
 
 translate = boto3.client(service_name='translate', region_name='us-west-2', use_ssl=True)
