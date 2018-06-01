@@ -18,6 +18,24 @@ import json
 from random import randint
 import urllib
 
+
+polly = boto3.client("polly")
+pollyVoice = {'en': 'Amy', 'fr': 'Celine', 'de': 'Vicki', 'pt': 'Vitoria', 'es':'Enrique'}
+languageOptions = {'English': 'en', 'French': 'fr', 'German': 'de', 'Portugese': 'pt', 'Spanish':'es'}
+
+def mytargetlang():
+    while True:
+        for key in languageOptions:
+            print (key,":",languageOptions[key])
+        tlcode = input('please enter the language code: ')
+        for key in languageOptions:
+            if tlcode != languageOptions[key]:
+                continue
+            else:
+                return tlcode
+
+targetLang = mytargetlang()
+
 # Recordme Script
 # =========================================================================
 # Records audio
@@ -117,7 +135,6 @@ with open(dlfile, 'wb') as code:
 with open(dlfile) as x:
     datastore = json.load(x)
 
-subprocess.Popen(['open', dlfile])
 transcription = datastore['results']['transcripts'][0]['transcript']
 print(transcription)
     
@@ -130,21 +147,8 @@ print(transcription)
 
 # Create a client using the credentials and region defined in the [adminuser]
 # section of the AWS credentials file (~/.aws/credentials).
-polly = session.client("polly")
-pollyVoice = {'en': 'Amy', 'fr': 'Celine', 'de': 'Vicki', 'pt': 'Vitoria'}
-languageOptions = {'English': 'en', 'French': 'fr', 'German': 'de', 'Portugese': 'pt'}
-text = transcription
 
-def mytargetlang():
-    while True:
-        for key in languageOptions:
-            print (key,":",languageOptions[key])
-        tlcode = input('please enter the language code: ')
-        for key in languageOptions:
-            if tlcode != languageOptions[key]:
-                continue
-            else:
-                return tlcode
+text = transcription
 
 def readfile(f):
     readfile = open(f, 'r')
@@ -153,7 +157,7 @@ def readfile(f):
 
 translate = boto3.client(service_name='translate', region_name='us-west-2', use_ssl=True)
 result = translate.translate_text(Text=text, 
-            SourceLanguageCode='auto', TargetLanguageCode=(mytargetlang()))
+            SourceLanguageCode='auto', TargetLanguageCode=targetLang)
 # print('TranslatedText: ' + result.get('TranslatedText'))
 # print('SourceLanguageCode: ' + result.get('SourceLanguageCode'))
 # print('TargetLanguageCode: ' + result.get('TargetLanguageCode'))
