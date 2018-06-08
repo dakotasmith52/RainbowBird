@@ -52,7 +52,6 @@ RECORD_SECONDS = int(input('seconds to record: '))
 fileName = "recording.wav"
 # Create a file in the temporary directory
 outputfile = os.path.join(gettempdir(), fileName)
-compressedoutputfile = os.path.join(gettempdir(), 'recording.wav.gz')
 p = pyaudio.PyAudio()
 frames = []
 
@@ -64,11 +63,10 @@ stream = p.open(format=FORMAT,
                 output=False,
                 frames_per_buffer=chunk)
 
-def recordme(x):
+def recordme():
     record()
     end_stream()
     writefile()
-    upload(x)
 
 def record():
     print("* recording")
@@ -106,18 +104,9 @@ def writefile():
     myFile.writeframes(b''.join(frames))
     myFile.close()
 
-def compressfile():
-    with open(outputfile, 'rb') as f_in:
-        with gzip.open(compressedoutputfile, 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
-
-def upload(x):
-    s3 = boto3.resource('s3')
-    s3.meta.client.upload_file(x,'jedijamez-projects','RainbowBird/recording.wav')
-    print('done uploading')
 
 
-recordme(outputfile)
+recordme()
 
 # End of Recordme Script
 # =========================================================================
@@ -125,47 +114,14 @@ recordme(outputfile)
 # =========================================================================
 # Converts .wav stored in S3 to text
 
-
 session = Session(profile_name='default', region_name='us-west-2')
-ts = boto3.client('transcribe')
-job_name = str(randint(0,999))
-job_uri = 'https://s3-us-west-2.amazonaws.com/jedijamez-projects/RainbowBird/recording.wav'
-print('starting transcription job ' + str(job_name))
-ts.start_transcription_job(
-    TranscriptionJobName=job_name,
-    Media={'MediaFileUri':job_uri},
-    MediaFormat='wav',
-    LanguageCode='en-US'
-)
-print('transcription job running...')
-while True:
-    status = ts.get_transcription_job(TranscriptionJobName=job_name)
-    if status['TranscriptionJob']['TranscriptionJobStatus'] in ['COMPLETED', 'FAILED']:
-        break
-    time.sleep(.2)
-print ('finished transcription job ' + str(job_name))
 
-outcome = status['TranscriptionJob']['TranscriptionJobStatus']
-
-transcript_uri = status['TranscriptionJob']['Transcript']['TranscriptFileUri']
-
-dlfile = os.path.join(gettempdir(), 'ts.json')
-print('getting json file...')
-f = urllib.request.urlopen(transcript_uri)
-print('got json file.')
-with open(dlfile, 'wb') as code:
-    print('writing contents to directory...')
-    code.write(f.read())
-    print ('done.')
-
-with open(dlfile) as x:
-    print('loading json into datastore...')
-    datastore = json.load(x)
-    print('done.')
-
-transcription = datastore['results']['transcripts'][0]['transcript']
-print(transcription)
-print('Outcome: ' + outcome)
+def transcribe():
+    os.system("gcloud ml speech recognize "+ outputfile +" --language-code='en-US' > transcription.json")
+    with open('transcription.json', 'r') as f:
+        tsfile = json.load(f)
+    transcription = tsfile['results'][0]['alternatives'][0]['transcript']
+    return transcription
     
 
 # End of Transcribe script
@@ -177,7 +133,7 @@ print('Outcome: ' + outcome)
 # Create a client using the credentials and region defined in the [adminuser]
 # section of the AWS credentials file (~/.aws/credentials).
 
-text = transcription
+text = transcribe()
 
 def readfile(f):
     readfile = open(f, 'r')
