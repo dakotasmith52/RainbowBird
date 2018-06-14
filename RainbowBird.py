@@ -142,7 +142,7 @@ def readfile(f):
 
 translate = boto3.client(service_name='translate', region_name='us-west-2', use_ssl=True)
 result = translate.translate_text(Text=text, 
-            SourceLanguageCode='auto', TargetLanguageCode=targetLang)
+            SourceLanguageCode='en', TargetLanguageCode=targetLang)
 # print('TranslatedText: ' + result.get('TranslatedText'))
 # print('SourceLanguageCode: ' + result.get('SourceLanguageCode'))
 # print('TargetLanguageCode: ' + result.get('TargetLanguageCode'))
