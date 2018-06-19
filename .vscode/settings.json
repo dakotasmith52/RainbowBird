@@ -1,3 +1,8 @@
 {
+<<<<<<< HEAD
     "python.pythonPath": "C:\\Users\\BOOMgamez\\AppData\\Local\\Programs\\Python\\Python36-32\\python.exe"
+=======
+    "python.pythonPath": "/usr/local/bin/python3",
+    "git.ignoreLimitWarning": true
+>>>>>>> 4a9f69d49f27c4ce97f49e8c7fbfd70d5af13fbd
 }
