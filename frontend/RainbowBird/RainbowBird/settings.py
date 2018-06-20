@@ -25,7 +25,7 @@ SECRET_KEY = '-ca40&rv+q@909k%dy#*_a)1%e9%g+i)1dh*4du-s$zsd(y$rp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [rainbowbirdtest-env.s2imyz2pxn.us-east-1.elasticbeanstalk.com]
 
 
 # Application definition
@@ -75,6 +75,7 @@ WSGI_APPLICATION = 'RainbowBird.wsgi.application'
 
 DATABASES = {
     'default': {
+        
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
