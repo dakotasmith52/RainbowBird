@@ -109,35 +109,6 @@ recordme(outputfile)
 # Converts .wav stored in S3 to text
 
 session = Session(profile_name='default', region_name='us-west-2')
-<<<<<<< HEAD:RainbowBird.py
-ts = boto3.client('transcribe')
-job_name = str(randint(0,999))
-job_uri = 'https://s3-us-west-2.amazonaws.com/jedijamez-projects/RainbowBird/recording.wav'
-ts.start_transcription_job(
-    TranscriptionJobName=job_name,
-    Media={'MediaFileUri':job_uri},
-    MediaFormat='wav',
-    LanguageCode='en-US'
-)
-while True:
-    status = ts.get_transcription_job(TranscriptionJobName=job_name)
-    if status['TranscriptionJob']['TranscriptionJobStatus'] in ['COMPLETED', 'FAILED']:
-        break
-    time.sleep(1)
-
-transcript_uri = status['TranscriptionJob']['Transcript']['TranscriptFileUri']
-
-dlfile = os.path.join(gettempdir(), 'ts.json')
-f = urllib.request.urlopen(transcript_uri)
-with open(dlfile, 'wb') as code:
-    code.write(f.read())
-
-with open(dlfile) as x:
-    datastore = json.load(x)
-
-transcription = datastore['results']['transcripts'][0]['transcript']
-print(transcription)
-=======
 
 def transcribe():
     ts = boto3.client('transcribe')
@@ -168,7 +139,6 @@ def transcribe():
     transcription = datastore['results']['transcripts'][0]['transcript']
     return transcription
 
->>>>>>> 4a9f69d49f27c4ce97f49e8c7fbfd70d5af13fbd:RainbowBird-AWS.py
     
 
 # End of Transcribe script

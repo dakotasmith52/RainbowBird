@@ -9,7 +9,8 @@ import json
 
 def transcribe():
     s3 = boto3.resource('s3')
-    obj = s3.Object('rainbowbird', 'transcripts/transcript.json')
+    obj = s3.Object('rainbowbird-translations', 'transcripts/transcript.txt')
+    objACL = s3.ObjectAcl('rainbowbird-translations', 'transcripts/transcript.txt')
     ts = boto3.client('transcribe')
     job_name = str(randint(0,999))
     job_uri = 'https://s3-us-west-2.amazonaws.com/rainbowbird/recording/Recording.wav'
@@ -37,5 +38,9 @@ def transcribe():
     # PUT request for S3 to create transcript file in s3://rainbowbird/transcripts/transcript.txt
     print('creating s3 object...')
     obj.put(Body=transcription)
+    objACL.put(ACL='public-read')
 
-transcribe()
+
+def lambda_handler(event, context):
+    transcribe()
+    return 'Hello from Lambda'
