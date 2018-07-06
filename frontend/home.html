@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title> Rainbow Bird </title>
+        <!-- FONT -->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet">
+        <!-- STYLESHEET -->
+        <link href="reset.css" rel="stylesheet">
+        <link href="style.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <h1>Rainbow Bird</h1>
+        <h2>Audio & Video Transcription</h2>
+
+        <!-- UPLOAD BUTTON -->
+        <input type="file" id="real-file" hidden="true"></input>
+        <button type="button" id="custom-button">UPLOAD FILE</button>
+        <span id="custom-text">No File Selected</span>
+        <span id="warning">Accepted Files: .MP3, .MP4, .MOV, & .WAV</span>
+
+        <form>
+            <input type="checkbox" name="Translation">Translate
+                From
+                <select>
+                    <option value="English">English</option>
+                    <option value="German">German</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                    <option value="Portugese">Portugese</option>
+                </select>
+
+                To
+                <select>
+                    <option value="English">English</option>
+                    <option value="German">German</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                    <option value="Portugese">Portugese</option>
+                </select>
+
+            <input type="checkbox" name="Transcribe">Transcribe
+        </form>
+        
+        <button>GO!</button>
+    </body>
+
+    <script src="index.js"></script>
+</html>
